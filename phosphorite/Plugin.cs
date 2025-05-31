@@ -241,6 +241,9 @@ namespace phosphorite
             GameLight gameLight = lightObj.AddComponent<GameLight>();
             gameLight.light = unityLight;
 
+            if (intensity <= 0)
+                gameLight.negativeLight = true;
+            
             lightList.Add(gameLight);
             int id = lightingManager.AddGameLight(gameLight);
             if (id >= 0)
