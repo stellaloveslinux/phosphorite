@@ -31,6 +31,12 @@ namespace phosphorite
             public Color color;
         }
 
+        public class LightSettings
+        {
+            public Color ambientColor;
+            public List<LightDataCustom> lights;
+        }
+
         public static GameLightingManager lightingManager;
 
         public bool onGUIEnabled;
@@ -52,6 +58,7 @@ namespace phosphorite
 
         private string PluginDirectory => Path.Combine(Paths.BepInExRootPath, "phosphorite");
         private List<LightDataCustom> lightData = new List<LightDataCustom>();
+        public LightSettings lightSettings;
 
         Plugin()
         {
@@ -65,7 +72,11 @@ namespace phosphorite
 
         IEnumerator SaveLights()
         {
-            string json = Newtonsoft.Json.JsonConvert.SerializeObject(lightData);
+            lightSettings = new LightSettings();
+            lightSettings.ambientColor = Shader.GetGlobalColor("_GT_GameLight_Ambient_Color");
+            lightSettings.lights = lightData;
+            
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(lightSettings);
 
             Directory.CreateDirectory(PluginDirectory);
             File.WriteAllText(Path.Combine(PluginDirectory, "data.json"), json);
@@ -166,10 +177,28 @@ namespace phosphorite
                 lightingManager.ClearGameLights();
                 if (File.Exists(Path.Combine(PluginDirectory, "data.json")))
                 {
-                    List<LightDataCustom>? gameLights = Newtonsoft.Json.JsonConvert.DeserializeObject<List<LightDataCustom>>(File.ReadAllText(Path.Combine(PluginDirectory, "data.json")));
-                    if (gameLights != null)
-                        foreach (LightDataCustom gameLight in gameLights)
-                            AddDebugLight(gameLight.pos, gameLight.intensity, gameLight.color);
+                    string jsonText = File.ReadAllText(Path.Combine(PluginDirectory, "data.json"));
+                    if (jsonText.Contains("[{\"pos\":{\"x\""))
+                    {
+                        Debug.Log("loading a V1 json");
+                        // V1 json
+                        List<LightDataCustom>? gameLights =
+                            Newtonsoft.Json.JsonConvert.DeserializeObject<List<LightDataCustom>>(jsonText);
+                        if (gameLights != null)
+                            foreach (LightDataCustom gameLight in gameLights)
+                                AddDebugLight(gameLight.pos, gameLight.intensity, gameLight.color);
+                    }
+                    else
+                    {
+                        Debug.Log("loading a V2 json");
+                        // V2 json (new thing: AMBIENT COLOR!!!! ik its nothing much but i hate running the function everytime i load a v1 json)
+                        LightSettings? lightSettings = JsonConvert.DeserializeObject<LightSettings?>(jsonText);
+                        lightingManager.SetAmbientLightDynamic(lightSettings.ambientColor);
+                        
+                        if (lightSettings.lights != null)
+                            foreach (LightDataCustom gameLight in lightSettings.lights)
+                                AddDebugLight(gameLight.pos, gameLight.intensity, gameLight.color);
+                    }
                 }
             }
 
