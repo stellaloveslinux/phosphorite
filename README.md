@@ -14,4 +14,6 @@ the lights from this json are in city, first go there and then load.
 if you spawn too many lights, your game ***WILL*** lag, depending on how much lights there are.
 
 have fun and report issues in the *issues* tab at the top, or submit *pull requests* if you actually know how to code lol
+
+
 ![image](https://github.com/user-attachments/assets/ed4460ea-2ab8-4374-9c6e-f0723ee39cb2)
