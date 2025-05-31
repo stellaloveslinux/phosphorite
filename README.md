@@ -6,9 +6,10 @@ to open the ui to create lights/remove lights, press v on your keyboard
 
 make sure to save your lights that you added once done
 
-to load a json, click the `Load Lights from JSON` button in the ui. heres a good example of a json:
-https://github.com/biotest052/phosphorite/blob/main/exampleLights.json
--# the lights from this json are in city, first go there and then load.
+to load a json, click the `Load Lights from JSON` button in the ui. heres a good example of a json: 
+[link to the json](https://github.com/BrokenSt0ne/phosphorite/blob/main/exampleLights.json)
+
+the lights from this json are in city, first go there and then load.
 
 if you spawn too many lights, your game ***WILL*** lag, depending on how much lights there are.
 
